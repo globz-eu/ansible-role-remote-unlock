@@ -1,0 +1,4 @@
+# {{ ansible_managed }}
+
+DROPBEAR_OPTIONS="{{ remote_unlock_dropbear_options }}"
+IFDOWN=*

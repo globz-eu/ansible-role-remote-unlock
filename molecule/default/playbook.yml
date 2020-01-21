@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    remote_unlock_authorized_keys:
+      user: ssh-rsa AAAABLABLA== user@host
+  roles:
+    - role: remote-unlock

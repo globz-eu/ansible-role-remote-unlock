@@ -1,0 +1,29 @@
+---
+- name: Install dropbear-initramfs
+  apt:
+    name: dropbear-initramfs
+
+- name: Configure dropbear-initramfs
+  template:
+    src: config
+    dest: /etc/dropbear-initramfs/config
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Manage dropbear authorized keys
+  authorized_key:
+    user: root
+    state: present
+    key: "{{ item.value }}"
+    path: /etc/dropbear-initramfs/authorized_keys
+    manage_dir: false
+  with_dict: "{{ remote_unlock_authorized_keys }}"
+  notify: Update Initramfs
+
+- name: Configure default GRUB
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX='
+    line: 'GRUB_CMDLINE_LINUX="{{ remote_unlock_grub_cmdline_linux }}"'
+  notify: Update GRUB
