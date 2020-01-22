@@ -1,5 +1,4 @@
 ---
-remote_unlock_dropbear_port: 10022
-remote_unlock_dropbear_options: "-R -E -s -j -k -K 20 -I 120 -p {{ remote_unlock_dropbear_port }} -c /usr/bin/cryptroot-unlock"
-remote_unlock_grub_cmdline_linux: "net.ifnames=0 biosdevname=0 ip=1.2.3.4::1.2.3.1:255.255.255.0::eth0:off"
+remote_unlock_network_interface: eth0
+remote_unlock_initramfs_conf_ip: ":::::{{ remote_unlock_network_interface }}:dhcp"
 remote_unlock_authorized_keys: {}

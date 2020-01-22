@@ -1,15 +1,32 @@
 ---
 - name: Install dropbear-initramfs
   apt:
-    name: dropbear-initramfs
+    pkg:
+      - dropbear
+      - initramfs-tools
+      - busybox
 
-- name: Configure dropbear-initramfs
-  template:
-    src: config
-    dest: /etc/dropbear-initramfs/config
+- name: ensure dropbear is disabled after boot
+  lineinfile:
+    path: /etc/default/dropbear
+    regexp: '^NO_START='
+    line: 'NO_START=1'
+
+- name: Copy unlock script
+  copy:
+    src: "{{ role_path }}/files/crypt_unlock.sh"
+    dest: /etc/initramfs-tools/hooks/crypt_unlock.sh
     owner: root
     group: root
-    mode: "0644"
+    mode: "0750"
+
+- name: Copy unlock script
+  copy:
+    src: "{{ role_path }}/files/cleanup.sh"
+    dest: /etc/initramfs-tools/scripts/init-bottom/cleanup.sh
+    owner: root
+    group: root
+    mode: "0750"
 
 - name: Manage dropbear authorized keys
   authorized_key:
@@ -21,9 +38,9 @@
   with_dict: "{{ remote_unlock_authorized_keys }}"
   notify: Update Initramfs
 
-- name: Configure default GRUB
+- name: configure initramfs-tools
   lineinfile:
-    path: /etc/default/grub
-    regexp: '^GRUB_CMDLINE_LINUX='
-    line: 'GRUB_CMDLINE_LINUX="{{ remote_unlock_grub_cmdline_linux }}"'
-  notify: Update GRUB
+    path: /etc/initramfs-tools/initramfs.conf
+    regexp: '^IP='
+    line: 'IP={{ remote_unlock_initramfs_conf_ip }}'
+  notify: Update Initramfs
