@@ -1,12 +1,12 @@
 ---
-- name: Install dropbear-initramfs
+- name: Install dependencies
   apt:
     pkg:
       - dropbear
       - initramfs-tools
       - busybox
 
-- name: ensure dropbear is disabled after boot
+- name: Ensure dropbear is disabled after boot
   lineinfile:
     path: /etc/default/dropbear
     regexp: '^NO_START='
@@ -20,7 +20,7 @@
     group: root
     mode: "0750"
 
-- name: Copy unlock script
+- name: Copy cleanup script
   copy:
     src: "{{ role_path }}/files/cleanup.sh"
     dest: /etc/initramfs-tools/scripts/init-bottom/cleanup.sh
